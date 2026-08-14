@@ -1,0 +1,34 @@
+.order-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+}
+
+.status-ordered {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.status-confirmed {
+  background-color: #f3e8ff;
+  color: #6b21a8;
+}
+
+.status-ready {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-pickedup {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.status-cancelled {
+  background-color: #fee2e2;
+  color: #991b1b;
+}

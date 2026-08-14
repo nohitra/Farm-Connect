@@ -1,0 +1,66 @@
+.produce-skeleton-card {
+  border-radius: var(--radius-md, 16px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 320px;
+}
+
+.skeleton-image {
+  height: 160px;
+  width: 100%;
+  background: #e2e8f0;
+}
+
+.skeleton-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  flex: 1;
+}
+
+.skeleton-line {
+  height: 14px;
+  background: #e2e8f0;
+  border-radius: 6px;
+}
+
+.skeleton-line.title {
+  width: 70%;
+  height: 18px;
+}
+
+.skeleton-line.subtitle {
+  width: 45%;
+}
+
+.skeleton-line.price {
+  width: 35%;
+  height: 16px;
+  margin-top: 0.5rem;
+}
+
+.skeleton-button {
+  height: 38px;
+  background: #e2e8f0;
+  border-radius: 10px;
+  margin-top: auto;
+}
+
+/* Shimmer Animation */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 0%,
+    #e2e8f0 50%,
+    #f1f5f9 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}

@@ -1,0 +1,43 @@
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.search-input-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 260px;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon, .filter-icon {
+  position: absolute;
+  left: 1rem;
+  color: var(--text-muted);
+}
+
+.search-input-wrapper .form-control {
+  padding-left: 2.75rem;
+}
+
+.filter-dropdown-wrapper {
+  position: relative;
+  min-width: 220px;
+  display: flex;
+  align-items: center;
+}
+
+.filter-dropdown-wrapper .form-control {
+  padding-left: 2.75rem;
+}
+
+.produce-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}

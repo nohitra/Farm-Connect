@@ -1,0 +1,45 @@
+.stat-card {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stat-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-icon-wrapper {
+  padding: 0.5rem;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.1;
+}
+
+.stat-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.stat-color-emerald .stat-icon-wrapper { background: #dcfce7; color: #059669; }
+.stat-color-blue .stat-icon-wrapper { background: #dbeafe; color: #2563eb; }
+.stat-color-amber .stat-icon-wrapper { background: #fef3c7; color: #d97706; }
+.stat-color-purple .stat-icon-wrapper { background: #f3e8ff; color: #7c3aed; }
