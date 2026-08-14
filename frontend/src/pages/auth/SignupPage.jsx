@@ -202,7 +202,7 @@ const SignupPage = () => {
             <input
               type="text"
               className="form-control"
-              placeholder="e.g. Ananya Roy"
+              placeholder="Enter your full name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -215,7 +215,7 @@ const SignupPage = () => {
               <input
                 type="email"
                 className="form-control"
-                placeholder="you@example.com"
+                placeholder="name@example.com"
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
@@ -229,7 +229,7 @@ const SignupPage = () => {
               <input
                 type="tel"
                 className="form-control"
-                placeholder="9876543210"
+                placeholder="10-digit mobile number"
                 maxLength={10}
                 value={phone}
                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
@@ -246,7 +246,7 @@ const SignupPage = () => {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   className="form-control has-toggle"
-                  placeholder="••••••••"
+                  placeholder="Create a strong password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -316,7 +316,7 @@ const SignupPage = () => {
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="Flat 101, Green Apts, MG Road"
+                  placeholder="House/Flat No., Street Name, Area"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   required
@@ -327,7 +327,7 @@ const SignupPage = () => {
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="e.g. 520002 for Vijayawada or 500032 for Hyderabad"
+                  placeholder="6-digit pincode (e.g. 520002)"
                   value={pincode}
                   onChange={(e) => setPincode(e.target.value)}
                   required
@@ -345,7 +345,7 @@ const SignupPage = () => {
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="e.g. Green Meadows Organic Farm"
+                    placeholder="Enter your farm name"
                     value={farmName}
                     onChange={(e) => setFarmName(e.target.value)}
                     required
@@ -369,7 +369,7 @@ const SignupPage = () => {
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="e.g. Gannavaram, Vijayawada Rural"
+                  placeholder="Village / District"
                   value={farmLocation}
                   onChange={(e) => setFarmLocation(e.target.value)}
                   required

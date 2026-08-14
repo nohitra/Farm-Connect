@@ -115,36 +115,46 @@ const getBrowseProduce = async (req, res) => {
   try {
     const consumerProfile = await ConsumerProfile.findOne({ user: req.user._id });
 
-    if (!consumerProfile || !consumerProfile.assignedHub) {
-      return res.status(400).json({
-        success: false,
-        message: 'No assigned hub found for your profile. Please update your profile with a valid pincode.',
+    let assignedHubId = consumerProfile ? consumerProfile.assignedHub : null;
+
+    // 1. Try finding produce from approved farmers or farmers serving consumer's hub
+    let filter = { isActive: true };
+    if (assignedHubId) {
+      const eligibleFarmers = await FarmerProfile.find({
+        $or: [
+          { assignedHubs: assignedHubId },
+          { verificationStatus: 'approved' },
+        ],
       });
+
+      if (eligibleFarmers.length > 0) {
+        const farmerIds = eligibleFarmers.map((f) => f._id);
+        filter.farmer = { $in: farmerIds };
+      }
     }
 
-    const assignedHubId = consumerProfile.assignedHub;
-
-    const eligibleFarmers = await FarmerProfile.find({
-      assignedHubs: assignedHubId,
-      verificationStatus: 'approved',
-    });
-
-    const farmerIds = eligibleFarmers.map((f) => f._id);
-
-    const produceList = await Produce.find({
-      farmer: { $in: farmerIds },
-      isActive: true,
-    })
+    let produceList = await Produce.find(filter)
       .populate({
         path: 'farmer',
-        select: 'farmName farmLocation farmingPractice certifications farmPhotos bio rating user',
+        select: 'farmName farmLocation farmingPractice certifications farmPhotos bio rating user verificationStatus',
         populate: { path: 'user', select: 'name email' },
       })
       .sort({ createdAt: -1 });
 
+    // Fallback: If hub filter yielded 0 items, fetch all active produce so consumer search can find all products added by farmers
+    if (produceList.length === 0) {
+      produceList = await Produce.find({ isActive: true })
+        .populate({
+          path: 'farmer',
+          select: 'farmName farmLocation farmingPractice certifications farmPhotos bio rating user verificationStatus',
+          populate: { path: 'user', select: 'name email' },
+        })
+        .sort({ createdAt: -1 });
+    }
+
     res.json({
       success: true,
-      assignedHubId,
+      assignedHubId: assignedHubId || 'all',
       count: produceList.length,
       produce: produceList,
     });

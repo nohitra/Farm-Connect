@@ -40,6 +40,7 @@ const ConsumerOnboarding = () => {
             <input
               type="text"
               className="form-control"
+              placeholder="House/Flat No., Street Name, Area"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               required
@@ -51,6 +52,7 @@ const ConsumerOnboarding = () => {
             <input
               type="text"
               className="form-control"
+              placeholder="6-digit pincode"
               value={pincode}
               onChange={(e) => setPincode(e.target.value)}
               required

@@ -160,7 +160,7 @@ const LoginPage = () => {
                 type="text"
                 id="usernameOrEmail"
                 className="form-control"
-                placeholder="Username (e.g. Ananya Roy) or email address"
+                placeholder="Enter your username or email address"
                 value={usernameOrEmail}
                 onBlur={handleBlurIdentifier}
                 onChange={(e) => {
@@ -186,7 +186,7 @@ const LoginPage = () => {
                 type={showPassword ? 'text' : 'password'}
                 id="password"
                 className="form-control has-toggle"
-                placeholder="••••••••"
+                placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required

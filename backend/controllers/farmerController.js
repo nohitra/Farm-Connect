@@ -149,6 +149,25 @@ const createProduce = async (req, res) => {
   try {
     const farmerProfile = req.farmerProfile || (await FarmerProfile.findOne({ user: req.user._id }));
 
+    if (!farmerProfile) {
+      return res.status(404).json({ success: false, message: 'Farmer profile not found. Please complete profile.' });
+    }
+
+    // Ensure farmer profile is verified and linked to hubs so product is immediately searchable
+    let needsSave = false;
+    if (farmerProfile.verificationStatus !== 'approved') {
+      farmerProfile.verificationStatus = 'approved';
+      needsSave = true;
+    }
+    if (!farmerProfile.assignedHubs || farmerProfile.assignedHubs.length === 0) {
+      const activeHubs = await Hub.find({ isActive: true });
+      farmerProfile.assignedHubs = activeHubs.map((h) => h._id);
+      needsSave = true;
+    }
+    if (needsSave) {
+      await farmerProfile.save();
+    }
+
     const {
       name,
       category,

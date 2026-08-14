@@ -14,21 +14,25 @@ const GoogleIcon = () => (
   </svg>
 );
 
+const isDummyAddress = (addr) => !addr || addr.includes('Google Signed-In') || addr.includes('Address');
+const isDummyPhone = (p) => !p || (p.startsWith('999') && p.length === 10);
+const isDummyLocation = (loc) => !loc || loc === 'Vijayawada Rural';
+
 const CompleteProfilePage = () => {
   const { user, profile, refreshProfile } = useAuth();
   const navigate = useNavigate();
 
   const [role, setRole] = useState(user?.role || 'consumer');
   const [name, setName] = useState(user?.name || '');
-  const [phone, setPhone] = useState(user?.phone || '');
+  const [phone, setPhone] = useState(isDummyPhone(user?.phone) ? '' : (user?.phone || ''));
   
   // Consumer
-  const [address, setAddress] = useState(profile?.address || '');
-  const [pincode, setPincode] = useState(profile?.pincode || '520002');
+  const [address, setAddress] = useState(isDummyAddress(profile?.address) ? '' : (profile?.address || ''));
+  const [pincode, setPincode] = useState(profile?.pincode === '520002' ? '' : (profile?.pincode || ''));
 
   // Farmer
   const [farmName, setFarmName] = useState(profile?.farmName || '');
-  const [farmLocation, setFarmLocation] = useState(profile?.farmLocation || '');
+  const [farmLocation, setFarmLocation] = useState(isDummyLocation(profile?.farmLocation) ? '' : (profile?.farmLocation || ''));
   const [farmingPractice, setFarmingPractice] = useState('organic');
 
   const [loading, setLoading] = useState(false);
@@ -37,7 +41,7 @@ const CompleteProfilePage = () => {
   useEffect(() => {
     if (user) {
       setName(user.name || '');
-      setPhone(user.phone || '');
+      setPhone(isDummyPhone(user.phone) ? '' : (user.phone || ''));
       setRole(user.role || 'consumer');
     }
   }, [user]);
@@ -111,7 +115,7 @@ const CompleteProfilePage = () => {
               <input
                 type="text"
                 className="form-control"
-                placeholder="e.g. Ananya Roy or Ramesh Naidu"
+                placeholder="Enter your full name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -126,7 +130,7 @@ const CompleteProfilePage = () => {
               <input
                 type="tel"
                 className="form-control"
-                placeholder="9876543210"
+                placeholder="10-digit mobile number"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 required
@@ -143,7 +147,7 @@ const CompleteProfilePage = () => {
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="Flat 202, Sunshine Apartments, MG Road"
+                    placeholder="House/Flat No., Street Name, Area"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     required
@@ -155,7 +159,7 @@ const CompleteProfilePage = () => {
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="520002"
+                  placeholder="6-digit pincode"
                   value={pincode}
                   onChange={(e) => setPincode(e.target.value)}
                   required
@@ -171,7 +175,7 @@ const CompleteProfilePage = () => {
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="e.g. Sri Lakshmi Organic Farm"
+                    placeholder="Enter your farm name"
                     value={farmName}
                     onChange={(e) => setFarmName(e.target.value)}
                     required
@@ -183,7 +187,7 @@ const CompleteProfilePage = () => {
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="e.g. Kankipadu Village, Vijayawada"
+                  placeholder="Village / District"
                   value={farmLocation}
                   onChange={(e) => setFarmLocation(e.target.value)}
                   required

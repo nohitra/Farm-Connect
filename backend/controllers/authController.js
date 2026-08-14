@@ -311,7 +311,7 @@ const googleAuth = async (req, res) => {
       user = await User.create({
         name: verifiedName || cleanEmail.split('@')[0],
         email: cleanEmail,
-        phone: '999' + Math.floor(1000000 + Math.random() * 9000000),
+        phone: '',
         passwordHash,
         role: assignedRole,
         region: defaultRegion._id,
@@ -322,15 +322,15 @@ const googleAuth = async (req, res) => {
         let matchedHub = await Hub.findOne({ region: defaultRegion._id, isActive: true });
         await ConsumerProfile.create({
           user: user._id,
-          address: 'Google Signed-In Address',
-          pincode: '520002',
+          address: '',
+          pincode: '',
           assignedHub: matchedHub ? matchedHub._id : null,
         });
       } else {
         await FarmerProfile.create({
           user: user._id,
-          farmName: `${user.name}'s Organic Farm`,
-          farmLocation: 'Vijayawada Rural',
+          farmName: '',
+          farmLocation: '',
           farmingPractice: 'organic',
           verificationStatus: 'approved',
         });
