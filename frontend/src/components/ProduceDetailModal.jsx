@@ -16,7 +16,10 @@ const ProduceDetailModal = ({ produce, onClose, onAddToCart }) => {
   };
 
   const farmerName = produce.farmer?.farmName || produce.farmer?.user?.name || 'Local Farm';
-  const displayImage = produce.images && produce.images[0] ? produce.images[0] : getAutoCropImage(produce.name);
+  const displayImage =
+    produce.images && produce.images[0] && produce.images[0].trim() !== ''
+      ? produce.images[0]
+      : getAutoCropImage(produce.name, produce.category);
 
   return (
     <div className="modal-overlay animate-fade-in" onClick={onClose}>
@@ -33,7 +36,7 @@ const ProduceDetailModal = ({ produce, onClose, onAddToCart }) => {
               className="modal-image"
               onError={(e) => {
                 e.target.onerror = null;
-                e.target.src = getAutoCropImage(produce.name);
+                e.target.src = getAutoCropImage(produce.name, produce.category);
               }}
             />
             <span className="badge badge-organic modal-badge">

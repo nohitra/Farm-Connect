@@ -13,6 +13,11 @@ const FarmerProfileView = () => {
   const [produce, setProduce] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const handleAddToCart = (produceItem, quantity = 1) => {
+    addToCart(produceItem, quantity);
+    navigate('/consumer/cart');
+  };
+
   useEffect(() => {
     API.get(`/consumer/farmers/${id}`)
       .then((res) => {
@@ -118,7 +123,7 @@ const FarmerProfileView = () => {
       ) : (
         <div className="produce-grid">
           {produce.map((item) => (
-            <ProduceCard key={item._id} produce={{ ...item, farmer }} onAddToCart={addToCart} />
+            <ProduceCard key={item._id} produce={{ ...item, farmer }} onAddToCart={handleAddToCart} />
           ))}
         </div>
       )}

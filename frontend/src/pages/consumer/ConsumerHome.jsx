@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import API from '../../services/api';
@@ -6,18 +7,27 @@ import HubInfoBanner from '../../components/HubInfoBanner';
 import ProduceCard from '../../components/ProduceCard';
 import ProduceDetailModal from '../../components/ProduceDetailModal';
 import ProduceSkeletonLoader from '../../components/ProduceSkeletonLoader';
+import OrderCycleCountdown from '../../components/OrderCycleCountdown';
 import { Search, Filter, Sprout, Wheat, Milk, RotateCcw } from 'lucide-react';
 import './ConsumerPages.css';
 
 const ConsumerHome = () => {
   const { profile } = useAuth();
   const { addToCart } = useCart();
+  const navigate = useNavigate();
   const [produceList, setProduceList] = useState([]);
+  const [cycleSchedule, setCycleSchedule] = useState(null);
+  const [activeCycle, setActiveCycle] = useState(null);
   const [selectedProduce, setSelectedProduce] = useState(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [selectedPractice, setSelectedPractice] = useState('all');
   const [productType, setProductType] = useState('all'); // 'all' | 'farm' | 'dairy'
+
+  const handleAddToCart = (produceItem, quantity = 1) => {
+    addToCart(produceItem, quantity);
+    navigate('/consumer/cart');
+  };
 
   const hubName = profile?.assignedHub?.name || 'Governorpet / MG Road Hub';
 
@@ -26,6 +36,8 @@ const ConsumerHome = () => {
       .then((res) => {
         if (res.data.success) {
           setProduceList(res.data.produce);
+          if (res.data.schedule) setCycleSchedule(res.data.schedule);
+          if (res.data.activeCycle) setActiveCycle(res.data.activeCycle);
         }
       })
       .catch((err) => console.error('Error fetching produce:', err))
@@ -78,7 +90,23 @@ const ConsumerHome = () => {
 
   return (
     <div className="page-wrapper animate-fade-in">
-      <HubInfoBanner hubName={hubName} />
+      <HubInfoBanner
+        hubName={hubName}
+        isWindowOpen={cycleSchedule ? cycleSchedule.isWindowOpen : true}
+        closeWindowText={
+          cycleSchedule?.isWindowOpen
+            ? 'Closes Thursday 9:00 PM'
+            : 'Opens Monday 9:00 AM'
+        }
+      />
+
+      <div style={{ marginBottom: '1.5rem' }}>
+        <OrderCycleCountdown
+          targetDate={cycleSchedule?.orderWindowClose}
+          isWindowOpen={cycleSchedule?.isWindowOpen}
+          cycleTitle="Weekly Order Cycle Window"
+        />
+      </div>
 
       {/* Main Category Tabs for Consumers: All vs Farm Products vs Dairy */}
       <div className="role-selector-tabs" style={{ marginBottom: '1.25rem', maxWidth: '560px' }}>
@@ -157,7 +185,7 @@ const ConsumerHome = () => {
             <ProduceCard
               key={prod._id}
               produce={prod}
-              onAddToCart={addToCart}
+              onAddToCart={handleAddToCart}
               onSelect={setSelectedProduce}
             />
           ))}
@@ -169,7 +197,7 @@ const ConsumerHome = () => {
         <ProduceDetailModal
           produce={selectedProduce}
           onClose={() => setSelectedProduce(null)}
-          onAddToCart={addToCart}
+          onAddToCart={handleAddToCart}
         />
       )}
     </div>

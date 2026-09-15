@@ -1,4 +1,48 @@
 const { OrderCycle, Order, Hub, Region, FarmerProfile } = require('../models');
+const {
+  calculateCurrentWeeklyCycleTimes,
+  getOrCreateActiveCycleForHub,
+} = require('../services/cycleScheduler');
+
+// @desc    Get active/current weekly order cycle and countdown schedule
+// @route   GET /api/cycles/active OR GET /api/cycles/hub/:hubId/active
+// @access  Private
+const getActiveCycle = async (req, res) => {
+  try {
+    const hubId = req.params.hubId || req.query.hubId || null;
+    const times = calculateCurrentWeeklyCycleTimes();
+
+    let cycle = null;
+    if (hubId) {
+      cycle = await getOrCreateActiveCycleForHub(hubId);
+    } else {
+      cycle = await OrderCycle.findOne({
+        status: times.isWindowOpen ? 'open' : { $in: ['open', 'closed', 'fulfilled'] },
+      })
+        .populate('region', 'name')
+        .populate('hub', 'name anchorAddress')
+        .sort({ createdAt: -1 });
+    }
+
+    res.json({
+      success: true,
+      cycle,
+      schedule: {
+        isWindowOpen: times.isWindowOpen,
+        orderWindowOpen: times.orderWindowOpen,
+        orderWindowClose: times.orderWindowClose,
+        deliveryDate: times.deliveryDate,
+        nextCycleOpen: times.nextCycleOpen,
+        timeRemainingMs: times.timeRemainingMs,
+        timeToNextOpenMs: times.timeToNextOpenMs,
+        weeklyRule: 'Monday 9:00 AM – Thursday 9:00 PM (Weekly Recurring Auto-Pilot)',
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching active cycle:', error);
+    res.status(500).json({ success: false, message: 'Error fetching active cycle status' });
+  }
+};
 
 // @desc    Create a new weekly order cycle for a Hub
 // @route   POST /api/admin/cycles
@@ -214,6 +258,7 @@ const getCycleAggregatedDemand = async (req, res) => {
 };
 
 module.exports = {
+  getActiveCycle,
   createOrderCycle,
   getOrderCycles,
   updateCycleStatus,

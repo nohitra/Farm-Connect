@@ -16,6 +16,7 @@ const {
   ChatMessage,
   HubAssignmentRequest,
 } = require('./models');
+const { calculateCurrentWeeklyCycleTimes } = require('./services/cycleScheduler');
 
 const connectDB = require('./config/db');
 
@@ -242,25 +243,27 @@ const seedData = async () => {
 
     console.log('✅ Consumer seeded and auto-assigned to Governorpet Hub (520002).');
 
-    // 7. Create Active Order Cycle
-    console.log('🌱 Seeding Order Cycles...');
-    const now = new Date();
-    const cycleOpen = new Date(now.getTime() - 24 * 60 * 60 * 1000); // Opened yesterday
-    const cycleClose = new Date(now.getTime() + 48 * 60 * 60 * 1000); // Closes in 2 days
-    const deliveryDate = new Date(now.getTime() + 96 * 60 * 60 * 1000); // Delivery in 4 days
+    // 7. Create Active Order Cycles with Standard Weekly Schedule
+    console.log('🌱 Seeding Weekly Recurring Order Cycles (Mon 9:00 AM - Thu 9:00 PM)...');
+    const cycleTimes = calculateCurrentWeeklyCycleTimes();
 
-    const orderCycle1 = await OrderCycle.create({
-      region: vijayawadaRegion._id,
-      hub: vijayawadaHubs[0]._id,
-      weekStartDate: cycleOpen,
-      weekEndDate: deliveryDate,
-      orderWindowOpen: cycleOpen,
-      orderWindowClose: cycleClose,
-      deliveryDate: deliveryDate,
-      status: 'open',
-    });
+    const createdCycles = [];
+    for (const hub of [...vijayawadaHubs, ...hyderabadHubs]) {
+      const cycle = await OrderCycle.create({
+        region: hub.region,
+        hub: hub._id,
+        weekStartDate: cycleTimes.weekStartDate,
+        weekEndDate: cycleTimes.weekEndDate,
+        orderWindowOpen: cycleTimes.orderWindowOpen,
+        orderWindowClose: cycleTimes.orderWindowClose,
+        deliveryDate: cycleTimes.deliveryDate,
+        status: cycleTimes.isWindowOpen ? 'open' : 'closed',
+      });
+      createdCycles.push(cycle);
+    }
 
-    console.log('✅ Active OrderCycle created for Governorpet Hub.');
+    const orderCycle1 = createdCycles[0];
+    console.log(`✅ Seeded ${createdCycles.length} automated weekly order cycles across all regional hubs.`);
 
     // 8. Create Produce Items with Price Breakdown
     console.log('🌱 Seeding Produce Listings with Price Breakdown...');

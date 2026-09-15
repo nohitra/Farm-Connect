@@ -8,6 +8,10 @@ const {
   ChatMessage,
   User,
 } = require('../models');
+const {
+  calculateCurrentWeeklyCycleTimes,
+  getOrCreateActiveCycleForHub,
+} = require('../services/cycleScheduler');
 
 // ==========================================
 // 1. CONSUMER PROFILE & ONBOARDING
@@ -152,11 +156,19 @@ const getBrowseProduce = async (req, res) => {
         .sort({ createdAt: -1 });
     }
 
+    const schedule = calculateCurrentWeeklyCycleTimes();
+    let activeCycle = null;
+    if (assignedHubId) {
+      activeCycle = await getOrCreateActiveCycleForHub(assignedHubId, req.user?.region);
+    }
+
     res.json({
       success: true,
       assignedHubId: assignedHubId || 'all',
       count: produceList.length,
       produce: produceList,
+      schedule,
+      activeCycle,
     });
   } catch (error) {
     console.error('Error fetching produce for consumer:', error);
@@ -231,27 +243,14 @@ const placeOrder = async (req, res) => {
     }
 
     const hubId = consumerProfile.assignedHub;
+    const schedule = calculateCurrentWeeklyCycleTimes();
 
-    let activeCycle = await OrderCycle.findOne({
-      hub: hubId,
-      status: 'open',
-      orderWindowClose: { $gt: new Date() },
-    });
+    let activeCycle = await getOrCreateActiveCycleForHub(hubId, req.user?.region);
 
     if (!activeCycle) {
-      const now = new Date();
-      const weekEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-      const closeWindow = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
-
-      activeCycle = await OrderCycle.create({
-        region: req.user.region,
-        hub: hubId,
-        weekStartDate: now,
-        weekEndDate: weekEnd,
-        orderWindowOpen: now,
-        orderWindowClose: closeWindow,
-        deliveryDate: weekEnd,
-        status: 'open',
+      return res.status(400).json({
+        success: false,
+        message: 'No active order cycle found for your hub.',
       });
     }
 

@@ -10,7 +10,10 @@ const ProduceCard = ({ produce, onAddToCart, onSelect, isFarmerView = false, onE
 
   const farmerName = produce.farmer?.farmName || produce.farmer?.user?.name || 'Local Farmer';
   const practiceTag = produce.practiceTag || produce.farmer?.farmingPractice || 'Organic';
-  const displayImage = produce.images && produce.images[0] ? produce.images[0] : getAutoCropImage(produce.name);
+  const displayImage =
+    produce.images && produce.images[0] && produce.images[0].trim() !== ''
+      ? produce.images[0]
+      : getAutoCropImage(produce.name, produce.category);
 
   return (
     <div className="produce-card glass-card animate-fade-in">
@@ -21,7 +24,7 @@ const ProduceCard = ({ produce, onAddToCart, onSelect, isFarmerView = false, onE
           className="produce-image"
           onError={(e) => {
             e.target.onerror = null;
-            e.target.src = getAutoCropImage(produce.name);
+            e.target.src = getAutoCropImage(produce.name, produce.category);
           }}
         />
         <span className={`badge badge-${practiceTag.toLowerCase()}`}>
@@ -63,7 +66,13 @@ const ProduceCard = ({ produce, onAddToCart, onSelect, isFarmerView = false, onE
 
         <div className="produce-actions">
           {!isFarmerView ? (
-            <button onClick={() => onAddToCart && onAddToCart(produce)} className="btn btn-primary btn-add-cart">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onAddToCart) onAddToCart(produce);
+              }}
+              className="btn btn-primary btn-add-cart"
+            >
               <ShoppingBag size={16} /> Add to Cart
             </button>
           ) : (

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {
+  getActiveCycle,
   createOrderCycle,
   getOrderCycles,
   updateCycleStatus,
@@ -9,7 +10,9 @@ const {
 
 const { protect, authorize } = require('../middleware/auth');
 
-// Public/Protected view of order cycles
+// Public/Protected view of order cycles and active schedule countdown
+router.get('/active', protect, getActiveCycle);
+router.get('/hub/:hubId/active', protect, getActiveCycle);
 router.get('/', protect, getOrderCycles);
 router.get('/:cycleId/demand', protect, getCycleAggregatedDemand);
 

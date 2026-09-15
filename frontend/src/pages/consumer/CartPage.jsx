@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import PriceBreakdownDisplay from '../../components/PriceBreakdownDisplay';
+import OrderCycleCountdown from '../../components/OrderCycleCountdown';
 import API from '../../services/api';
 import { ShoppingBag, Trash2, Plus, Minus, CheckCircle2, MapPin } from 'lucide-react';
 
@@ -54,7 +55,11 @@ const CartPage = () => {
 
   return (
     <div className="page-wrapper animate-fade-in">
-      <h2 style={{ marginBottom: '1.5rem' }}>Shopping Cart & Hub Pickup Confirmation</h2>
+      <h2 style={{ marginBottom: '1rem' }}>Shopping Cart & Hub Pickup Confirmation</h2>
+
+      <div style={{ marginBottom: '1.5rem' }}>
+        <OrderCycleCountdown compact={true} cycleTitle="Weekly Checkout Window" />
+      </div>
 
       {error && (
         <div className="auth-error-alert" style={{ marginBottom: '1rem' }}>
